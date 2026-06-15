@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PeteFit">
+<meta name="theme-color" content="#0f1115">
+<title>PeteFit</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1f232c; --line:#2a2f3a;
+    --txt:#e8eaed; --muted:#9aa1ad; --accent:#4ade80; --accent2:#38bdf8;
+    --warn:#fbbf24; --bad:#f87171; --radius:16px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    font-size:16px;line-height:1.4}
+  body{padding:env(safe-area-inset-top) 0 calc(72px + env(safe-area-inset-bottom)) 0}
+  h1,h2,h3{margin:0 0 .4em 0;font-weight:650}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  header .hi{font-size:20px;font-weight:700}
+  header .date{color:var(--muted);font-size:13px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin-bottom:14px}
+  .card h2{font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+  .row{display:flex;gap:12px}
+  .row>*{flex:1}
+  .stat{background:var(--panel2);border-radius:12px;padding:14px;text-align:center}
+  .stat .num{font-size:26px;font-weight:750;line-height:1}
+  .stat .lbl{font-size:11px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.4px}
+  .accent{color:var(--accent)} .accent2{color:var(--accent2)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+  .bar{height:8px;background:var(--panel2);border-radius:8px;overflow:hidden;margin-top:8px}
+  .bar>span{display:block;height:100%;background:var(--accent);border-radius:8px;transition:width .4s}
+  button,.btn{font-family:inherit;font-size:15px;border:none;border-radius:12px;
+    padding:12px 14px;background:var(--accent);color:#06240f;font-weight:650;cursor:pointer}
+  button.ghost{background:var(--panel2);color:var(--txt);border:1px solid var(--line)}
+  button.sm{padding:8px 10px;font-size:13px}
+  input,select,textarea{font-family:inherit;font-size:15px;background:var(--panel2);
+    color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:11px;width:100%}
+  label{font-size:13px;color:var(--muted);display:block;margin:10px 0 4px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .chip{display:inline-block;background:var(--panel2);border:1px solid var(--line);
+    border-radius:999px;padding:6px 12px;font-size:13px;margin:0 6px 6px 0;cursor:pointer}
+  .chip.on{background:var(--accent);color:#06240f;border-color:var(--accent)}
+  .item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+  .item:last-child{border-bottom:none}
+  .item .meta{font-size:12px;color:var(--muted)}
+  .x{color:var(--bad);font-size:13px;cursor:pointer;padding:4px 8px}
+  nav{position:fixed;bottom:0;left:0;right:0;background:rgba(15,17,21,.92);
+    backdrop-filter:blur(12px);border-top:1px solid var(--line);
+    display:flex;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom)) 4px;z-index:50}
+  nav button{background:none;color:var(--muted);font-size:11px;font-weight:600;padding:6px 4px;
+    display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
+  nav button .ic{font-size:20px}
+  nav button.on{color:var(--accent)}
+  .hide{display:none}
+  .muted{color:var(--muted)} .small{font-size:13px} .tiny{font-size:11px}
+  .recipe{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+  .recipe h3{font-size:16px;margin-bottom:4px}
+  .tag{display:inline-block;background:#243; color:var(--accent);border-radius:6px;padding:2px 7px;font-size:11px;margin-right:5px}
+  .tag.t{background:#234;color:var(--accent2)} .tag.q{background:#332;color:var(--warn)}
+  details summary{cursor:pointer;color:var(--accent2);font-size:14px;margin-top:8px;list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  .note{font-size:12px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px;margin-top:10px}
+  .ok{color:var(--accent)} .flex{display:flex;gap:8px;align-items:center}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase}
+  .sparkwrap{display:flex;align-items:flex-end;gap:3px;height:44px;margin-top:8px}
+  .sparkwrap div{flex:1;background:var(--accent2);border-radius:3px;min-height:3px;opacity:.85}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="hi">PeteFit 💪</div>
+      <div class="date" id="todayDate"></div>
+    </div>
+    <button class="ghost sm" onclick="exportData()">Backup</button>
+  </header>
+
+  <!-- ============ DASHBOARD ============ -->
+  <section id="tab-home">
+    <div class="card">
+      <div class="row">
+        <div class="stat"><div class="num accent" id="streakNum">0</div><div class="lbl">Week streak</div></div>
+        <div class="stat"><div class="num accent2" id="weekWorkouts">0</div><div class="lbl">Sessions / wk</div></div>
+        <div class="stat"><div class="num" id="lastWeight">—</div><div class="lbl">Weight (kg)</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Protein today</h2>
+      <div class="flex" style="justify-content:space-between">
+        <div><span class="num" style="font-size:28px;font-weight:750" id="protToday">0</span>
+          <span class="muted"> / <span id="protTarget">160</span> g</span></div>
+        <div class="muted small" id="protKcal"></div>
+      </div>
+      <div class="bar"><span id="protBar" style="width:0%"></span></div>
+      <div class="note" id="protNote"></div>
+    </div>
+
+    <div class="card">
+      <h2>This week</h2>
+      <div id="weekList"><div class="muted small">No sessions logged yet — go to Train.</div></div>
+    </div>
+
+    <div class="card">
+      <h2>Body trend</h2>
+      <div class="sparkwrap" id="weightSpark"></div>
+      <div class="muted tiny" id="weightSparkLbl" style="margin-top:6px">Log weight under Body to see your trend.</div>
+    </div>
+
+    <div class="card">
+      <h2>Tonight's pick</h2>
+      <div id="homeRecipe"></div>
+    </div>
+  </section>
+
+  <!-- ============ TRAIN ============ -->
+  <section id="tab-train" class="hide">
+    <div class="card">
+      <h2>Log a session</h2>
+      <label>Session type</label>
+      <select id="sessType">
+        <option>Push (chest/shoulders/triceps)</option>
+        <option>Pull (back/biceps)</option>
+        <option>Legs</option>
+        <option>Upper</option>
+        <option>Lower</option>
+        <option>Full body</option>
+        <option>Cardio / conditioning</option>
+      </select>
+      <div id="exBlock"></div>
+      <button class="ghost sm" style="margin-top:10px" onclick="addExercise()">+ Add exercise</button>
+      <button style="margin-top:10px;width:100%" onclick="saveSession()">Save session</button>
+      <div class="note">Tip: the app remembers your last weight per exercise so you always know the number to beat (progressive overload).</div>
+    </div>
+
+    <div class="card">
+      <h2>Import from Strong</h2>
+      <p class="small muted">Export a CSV in Strong (Settings → Export data) and load it here. Your sets get pulled in automatically.</p>
+      <input type="file" id="strongFile" accept=".csv" onchange="importStrong(event)">
+      <div id="importMsg" class="small" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card">
+      <h2>History</h2>
+      <div id="sessHistory"><div class="muted small">Nothing logged yet.</div></div>
+    </div>
+  </section>
+
+  <!-- ============ FOOD ============ -->
+  <section id="tab-food" class="hide">
+    <div class="card">
+      <h2>Quick add</h2>
+      <div id="quickFoods"></div>
+    </div>
+    <div class="card">
+      <h2>Custom food</h2>
+      <div class="grid2">
+        <div><label>Food</label><input id="fName" placeholder="e.g. Chicken &amp; rice"></div>
+        <div><label>Protein (g)</label><input id="fProt" type="number" inputmode="numeric"></div>
+      </div>
+      <div class="grid2">
+        <div><label>Calories (kcal)</label><input id="fKcal" type="number" inputmode="numeric"></div>
+        <div style="display:flex;align-items:flex-end"><button style="width:100%" onclick="addCustomFood()">Add</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Today's food</h2>
+      <div id="foodList"><div class="muted small">Nothing logged yet.</div></div>
+      <div class="flex" style="justify-content:space-between;margin-top:10px;font-weight:650">
+        <span>Total</span><span id="foodTotal">0 g · 0 kcal</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BODY ============ -->
+  <section id="tab-body" class="hide">
+    <div class="card">
+      <h2>Log measurements</h2>
+      <div class="grid2">
+        <div><label>Weight (kg)</label><input id="mWeight" type="number" step="0.1" inputmode="decimal"></div>
+        <div><label>Waist (cm)</label><input id="mWaist" type="number" step="0.1" inputmode="decimal"></div>
+      </div>
+      <button style="width:100%;margin-top:10px" onclick="saveBody()">Save weight / waist</button>
+    </div>
+
+    <div class="card">
+      <h2>Metabolic markers</h2>
+      <p class="small muted">Log these when you get bloods done. Trends matter more than any single value. Reference bands shown are general adult ranges — your clinician's targets take priority.</p>
+      <div class="grid2">
+        <div><label>Fasting glucose (mmol/L)</label><input id="lGlu" type="number" step="0.1" inputmode="decimal"></div>
+        <div><label>HbA1c (%)</label><input id="lHba" type="number" step="0.1" inputmode="decimal"></div>
+      </div>
+      <div class="grid2">
+        <div><label>ALT (U/L)</label><input id="lAlt" type="number" inputmode="numeric"></div>
+        <div><label>Triglycerides (mmol/L)</label><input id="lTrig" type="number" step="0.1" inputmode="decimal"></div>
+      </div>
+      <button class="ghost" style="width:100%;margin-top:10px" onclick="saveLabs()">Save labs</button>
+      <div id="labFeedback" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card">
+      <h2>History</h2>
+      <div id="bodyHistory"><div class="muted small">No measurements yet.</div></div>
+    </div>
+  </section>
+
+  <!-- ============ RECIPES ============ -->
+  <section id="tab-recipes" class="hide">
+    <div class="card">
+      <h2>Filter</h2>
+      <div id="recipeFilters">
+        <span class="chip on" data-f="all">All</span>
+        <span class="chip" data-f="quick">Quick (≤15m)</span>
+        <span class="chip" data-f="travel">Travel-friendly</span>
+        <span class="chip" data-f="spanish">Spanish/Med</span>
+        <span class="chip" data-f="meat">Meat-heavy</span>
+      </div>
+    </div>
+    <div id="recipeList"></div>
+  </section>
+</div>
+
+<nav>
+  <button class="on" data-tab="home" onclick="go('home')"><span class="ic">🏠</span>Home</button>
+  <button data-tab="train" onclick="go('train')"><span class="ic">🏋️</span>Train</button>
+  <button data-tab="food" onclick="go('food')"><span class="ic">🍽️</span>Food</button>
+  <button data-tab="body" onclick="go('body')"><span class="ic">📈</span>Body</button>
+  <button data-tab="recipes" onclick="go('recipes')"><span class="ic">📖</span>Recipes</button>
+</nav>
+
+<script>
+/* ---------- config ---------- */
+const PROTEIN_TARGET = 160;           // g/day — ~1.8g/kg for ~88kg, edit anytime
+const todayKey = () => new Date().toISOString().slice(0,10);
+const fmtDate = d => new Date(d).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+
+/* ---------- storage ---------- */
+const DB = JSON.parse(localStorage.getItem('petefit')||'{}');
+DB.sessions ??= [];   // {date,type,exercises:[{name,sets,reps,weight}]}
+DB.food ??= {};       // {date:[{name,prot,kcal}]}
+DB.body ??= [];       // {date,weight,waist}
+DB.labs ??= [];       // {date,glu,hba,alt,trig}
+function save(){ localStorage.setItem('petefit',JSON.stringify(DB)); }
+
+/* ---------- nav ---------- */
+function go(tab){
+  ['home','train','food','body','recipes'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('hide',t!==tab);
+  });
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  window.scrollTo(0,0);
+  if(tab==='home') renderHome();
+  if(tab==='food') renderFood();
+  if(tab==='body') renderBody();
+  if(tab==='train') renderTrain();
+  if(tab==='recipes') renderRecipes();
+}
+
+/* ---------- recipes (tuned: Mediterranean/Spanish + high-protein + quick, NAFLD/pre-diabetes friendly) ---------- */
+const RECIPES = [
+  {n:"Garlic tuna & white bean bowl",tags:["quick","travel","spanish"],time:8,prot:42,kcal:480,
+   shop:"2 tins tuna in olive oil, 1 tin white beans (judías), cherry tomatoes, baby spinach, lemon, garlic",
+   how:"Drain beans, toss with tuna, halved tomatoes, spinach. Dress with crushed garlic, lemon, the tuna's olive oil, S&P. No cooking."},
+  {n:"Spanish tortilla (high-protein)",tags:["spanish","meat"],time:25,prot:34,kcal:520,
+   shop:"6 eggs, 1 large potato OR courgette, onion, olive oil, optional serrano ham",
+   how:"Soften thin-sliced potato/courgette + onion in oil. Beat eggs, combine, cook low both sides. Swap half the potato for courgette to cut the carb load."},
+  {n:"Pork loin, padrón peppers & chickpeas",tags:["spanish","meat"],time:20,prot:48,kcal:600,
+   shop:"Pork loin steaks, padrón peppers, 1 tin chickpeas, smoked paprika, garlic, olive oil",
+   how:"Sear pork 3–4 min/side, rest. Blister peppers in the same pan, warm chickpeas with paprika & garlic. Plate together."},
+  {n:"Greek yogurt protein breakfast",tags:["quick","travel"],time:4,prot:35,kcal:430,
+   shop:"Greek yogurt (0–2%), whey or skyr, walnuts, berries, cinnamon, chia",
+   how:"300g yogurt + scoop whey, top with berries, walnuts, chia, cinnamon. Low-GI, liver-friendly, zero cook."},
+  {n:"Sheet-pan chicken, peppers & olives",tags:["meat","spanish"],time:30,prot:52,kcal:560,
+   shop:"Chicken thighs (skinless), bell peppers, red onion, olives, oregano, olive oil, lemon",
+   how:"Toss everything with oil/oregano/lemon, roast 25–30 min at 200°C. Batch double for lunches."},
+  {n:"Salmon, asparagus & lentils",tags:["spanish"],time:22,prot:46,kcal:560,
+   shop:"Salmon fillets, asparagus, 1 pouch cooked puy lentils, lemon, dill, olive oil",
+   how:"Pan-sear salmon 4 min/side, griddle asparagus, warm lentils with lemon & dill. Omega-3 + fibre, good for liver fat."},
+  {n:"Beef & veg stir-fry (low-carb)",tags:["quick","meat"],time:15,prot:50,kcal:540,
+   shop:"Lean beef strips, broccoli, peppers, garlic, ginger, soy/tamari, sesame oil",
+   how:"High-heat sear beef, remove. Stir-fry veg, return beef, splash tamari. Serve over a small portion of rice or cauli-rice."},
+  {n:"Tinned sardines on rye",tags:["quick","travel","spanish"],time:5,prot:30,kcal:380,
+   shop:"Tinned sardines, wholegrain/rye bread, tomato, garlic, olive oil",
+   how:"Rub toast with garlic & tomato (pan con tomate style), top with sardines. Spanish, cheap, high omega-3."},
+  {n:"Turkey & bean chilli (batch)",tags:["meat","travel"],time:35,prot:45,kcal:520,
+   shop:"Turkey mince, kidney beans, chopped tomatoes, peppers, onion, cumin, paprika, chilli",
+   how:"Brown turkey, add veg & spices, simmer 25 min with tomatoes & beans. Makes 4–5 portions, freezes well for travel weeks."},
+  {n:"Cottage cheese & egg scramble",tags:["quick"],time:8,prot:38,kcal:400,
+   shop:"4 eggs, cottage cheese, spinach, tomatoes, olive oil",
+   how:"Scramble eggs soft, fold in cottage cheese & wilted spinach at the end. ~38g protein in under 10 min."},
+  {n:"Prawn & courgette 'pasta'",tags:["quick","spanish"],time:14,prot:40,kcal:420,
+   shop:"Raw prawns, courgetti (spiralised), garlic, chilli, cherry tomatoes, lemon, olive oil",
+   how:"Sauté garlic & chilli, add prawns 2–3 min, toss with courgetti & tomatoes. Low-carb, light on the liver."},
+  {n:"Hake, peppers & potatoes (a la plancha)",tags:["spanish","meat"],time:28,prot:44,kcal:560,
+   shop:"Hake or cod fillets, small new potatoes, red peppers, parsley, garlic, olive oil",
+   how:"Boil/steam potatoes, blister peppers, pan-sear hake 3 min/side. Classic Spanish plate, dress with garlic-parsley oil."}
+];
+
+function recipeFilter(){return document.querySelector('#recipeFilters .chip.on').dataset.f;}
+function matchRecipe(r,f){
+  if(f==='all') return true;
+  if(f==='quick') return r.time<=15;
+  if(f==='travel') return r.tags.includes('travel');
+  if(f==='spanish') return r.tags.includes('spanish');
+  if(f==='meat') return r.tags.includes('meat');
+  return true;
+}
+function recipeCard(r){
+  const t = r.time<=15?'<span class="tag q">⚡ '+r.time+'m</span>':'<span class="tag t">⏱ '+r.time+'m</span>';
+  const sp = r.tags.includes('spanish')?'<span class="tag">Spanish/Med</span>':'';
+  return `<div class="recipe"><h3>${r.n}</h3>
+    <div>${t}${sp}<span class="tag t">${r.prot}g protein</span><span class="tag t">${r.kcal} kcal</span></div>
+    <details><summary>Shopping list</summary><div class="small" style="margin-top:6px">${r.shop}</div></details>
+    <details><summary>Method</summary><div class="small" style="margin-top:6px">${r.how}</div></details></div>`;
+}
+function renderRecipes(){
+  const f=recipeFilter();
+  document.getElementById('recipeList').innerHTML =
+    RECIPES.filter(r=>matchRecipe(r,f)).map(recipeCard).join('');
+}
+document.getElementById('recipeFilters').addEventListener('click',e=>{
+  if(!e.target.classList.contains('chip'))return;
+  document.querySelectorAll('#recipeFilters .chip').forEach(c=>c.classList.remove('on'));
+  e.target.classList.add('on'); renderRecipes();
+});
+
+/* ---------- quick foods ---------- */
+const QUICK = [
+  {name:"Greek yogurt + whey",prot:35,kcal:300},
+  {name:"4 eggs",prot:24,kcal:310},
+  {name:"Chicken breast 200g",prot:46,kcal:330},
+  {name:"Tin tuna",prot:25,kcal:120},
+  {name:"Scoop whey",prot:24,kcal:120},
+  {name:"Tin sardines",prot:23,kcal:200},
+  {name:"Cottage cheese 200g",prot:22,kcal:180},
+  {name:"Salmon fillet",prot:34,kcal:350},
+];
+function renderQuick(){
+  document.getElementById('quickFoods').innerHTML = QUICK.map((q,i)=>
+    `<span class="chip" onclick="addFood('${q.name.replace(/'/g,"")}',${q.prot},${q.kcal})">${q.name} · ${q.prot}g</span>`).join('');
+}
+
+/* ---------- food log ---------- */
+function addFood(name,prot,kcal){
+  const k=todayKey(); DB.food[k] ??= [];
+  DB.food[k].push({name,prot:+prot||0,kcal:+kcal||0}); save(); renderFood(); renderHome();
+}
+function addCustomFood(){
+  const n=document.getElementById('fName').value.trim();
+  if(!n){alert('Name the food');return;}
+  addFood(n,+document.getElementById('fProt').value||0,+document.getElementById('fKcal').value||0);
+  fName.value=fProt.value=fKcal.value='';
+}
+function delFood(i){const k=todayKey();DB.food[k].splice(i,1);save();renderFood();renderHome();}
+function renderFood(){
+  renderQuick();
+  const k=todayKey(); const list=DB.food[k]||[];
+  let p=0,c=0; list.forEach(f=>{p+=f.prot;c+=f.kcal;});
+  document.getElementById('foodList').innerHTML = list.length?list.map((f,i)=>
+    `<div class="item"><div><div>${f.name}</div><div class="meta">${f.prot}g · ${f.kcal} kcal</div></div>
+     <span class="x" onclick="delFood(${i})">remove</span></div>`).join('')
+    :'<div class="muted small">Nothing logged yet.</div>';
+  document.getElementById('foodTotal').textContent = `${p} g · ${c} kcal`;
+}
+
+/* ---------- training ---------- */
+const DEFAULT_EX = {
+  'Push (chest/shoulders/triceps)':['Bench press','Shoulder press','Incline DB press','Triceps pushdown'],
+  'Pull (back/biceps)':['Lat pulldown','Seated row','Face pull','Biceps curl'],
+  'Legs':['Squat','Leg press','Romanian deadlift','Leg curl','Calf raise'],
+  'Upper':['Bench press','Lat pulldown','Shoulder press','Seated row'],
+  'Lower':['Squat','Romanian deadlift','Leg press','Calf raise'],
+  'Full body':['Squat','Bench press','Seated row'],
+  'Cardio / conditioning':['Incline walk','Bike intervals','Rowing']
+};
+function lastWeightFor(name){
+  for(let i=DB.sessions.length-1;i>=0;i--){
+    const ex=DB.sessions[i].exercises.find(e=>e.name.toLowerCase()===name.toLowerCase());
+    if(ex&&ex.weight) return ex.weight;
+  }
+  return null;
+}
+function exRow(name='',sets='',reps='',weight=''){
+  const last=lastWeightFor(name);
+  const hint=last?`<span class="tiny accent">beat ${last}kg</span>`:'';
+  const div=document.createElement('div');
+  div.className='exrow'; div.style.cssText='margin:10px 0;padding:10px;background:var(--panel2);border-radius:10px';
+  div.innerHTML=`<div class="flex" style="justify-content:space-between"><input class="exn" placeholder="Exercise" value="${name}" style="flex:1">
+    <span class="x" onclick="this.closest('.exrow').remove()">✕</span></div>
+    <div class="grid3" style="margin-top:8px">
+      <div><label>Sets</label><input class="exs" type="number" inputmode="numeric" value="${sets}"></div>
+      <div><label>Reps</label><input class="exr" type="number" inputmode="numeric" value="${reps}"></div>
+      <div><label>Kg ${hint}</label><input class="exw" type="number" inputmode="decimal" value="${weight}"></div>
+    </div>`;
+  return div;
+}
+function loadTemplate(){
+  const block=document.getElementById('exBlock'); block.innerHTML='';
+  (DEFAULT_EX[document.getElementById('sessType').value]||[]).forEach(n=>block.appendChild(exRow(n)));
+}
+function addExercise(){document.getElementById('exBlock').appendChild(exRow());}
+function saveSession(){
+  const rows=[...document.querySelectorAll('#exBlock .exrow')];
+  const exercises=rows.map(r=>({
+    name:r.querySelector('.exn').value.trim(),
+    sets:+r.querySelector('.exs').value||0,
+    reps:+r.querySelector('.exr').value||0,
+    weight:+r.querySelector('.exw').value||0
+  })).filter(e=>e.name);
+  if(!exercises.length){alert('Add at least one exercise');return;}
+  DB.sessions.push({date:todayKey(),type:document.getElementById('sessType').value,exercises});
+  save(); loadTemplate(); renderTrain(); renderHome(); alert('Session saved 💪');
+}
+function renderTrain(){
+  if(!document.querySelector('#exBlock .exrow')) loadTemplate();
+  const h=DB.sessions.slice(-12).reverse();
+  document.getElementById('sessHistory').innerHTML = h.length?h.map(s=>
+    `<div class="item"><div><div>${s.type.split(' ')[0]} <span class="meta">${s.exercises.length} exercises</span></div>
+      <div class="meta">${s.exercises.slice(0,3).map(e=>e.name+(e.weight?' '+e.weight+'kg':'')).join(' · ')}</div></div>
+      <div class="meta">${fmtDate(s.date)}</div></div>`).join('')
+    :'<div class="muted small">Nothing logged yet.</div>';
+}
+document.getElementById('sessType').addEventListener('change',loadTemplate);
+
+/* ---------- Strong CSV import ---------- */
+function importStrong(e){
+  const file=e.target.files[0]; if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const text=r.result;
+      const delim = text.split('\n')[0].includes(';')?';':',';
+      const lines=text.split(/\r?\n/).filter(l=>l.trim());
+      const head=lines[0].split(delim).map(h=>h.replace(/"/g,'').trim().toLowerCase());
+      const iDate=head.findIndex(h=>h.includes('date'));
+      const iName=head.findIndex(h=>h.includes('exercise'));
+      const iWeight=head.findIndex(h=>h.includes('weight'));
+      const iReps=head.findIndex(h=>h.includes('reps'));
+      const byDate={};
+      for(let i=1;i<lines.length;i++){
+        const c=lines[i].split(delim).map(x=>x.replace(/"/g,'').trim());
+        const date=(c[iDate]||'').slice(0,10); if(!date)continue;
+        const name=c[iName]||'Exercise';
+        byDate[date] ??= {};
+        byDate[date][name] ??= {name,sets:0,reps:+c[iReps]||0,weight:+c[iWeight]||0};
+        byDate[date][name].sets++;
+        if((+c[iWeight]||0)>byDate[date][name].weight) byDate[date][name].weight=+c[iWeight]||0;
+      }
+      let added=0;
+      Object.entries(byDate).forEach(([date,exs])=>{
+        if(DB.sessions.some(s=>s.date===date&&s.source==='strong'))return;
+        DB.sessions.push({date,type:'Imported (Strong)',source:'strong',exercises:Object.values(exs)});
+        added++;
+      });
+      DB.sessions.sort((a,b)=>a.date.localeCompare(b.date));
+      save(); renderTrain(); renderHome();
+      document.getElementById('importMsg').innerHTML=`<span class="ok">Imported ${added} session(s) from Strong.</span>`;
+    }catch(err){
+      document.getElementById('importMsg').innerHTML=`<span class="bad">Could not parse that file — make sure it's the Strong CSV export.</span>`;
+    }
+  };
+  r.readAsText(file);
+}
+
+/* ---------- body & labs ---------- */
+function saveBody(){
+  const w=+document.getElementById('mWeight').value||null;
+  const wa=+document.getElementById('mWaist').value||null;
+  if(!w&&!wa){alert('Enter a weight or waist value');return;}
+  DB.body.push({date:todayKey(),weight:w,waist:wa}); save();
+  document.getElementById('mWeight').value=document.getElementById('mWaist').value='';
+  renderBody(); renderHome();
+}
+function saveLabs(){
+  const e={date:todayKey(),glu:+document.getElementById('lGlu').value||null,
+    hba:+document.getElementById('lHba').value||null,alt:+document.getElementById('lAlt').value||null,
+    trig:+document.getElementById('lTrig').value||null};
+  if(!e.glu&&!e.hba&&!e.alt&&!e.trig){alert('Enter at least one value');return;}
+  DB.labs.push(e); save();
+  ['lGlu','lHba','lAlt','lTrig'].forEach(id=>document.getElementById(id).value='');
+  renderBody();
+}
+function labBand(v,type){
+  if(v==null)return '';
+  let s='ok',txt='in range';
+  if(type==='glu'){ if(v>=7){s='bad';txt='diabetes range'} else if(v>=5.6){s='warn';txt='pre-diabetes range'} }
+  if(type==='hba'){ if(v>=6.5){s='bad';txt='diabetes range'} else if(v>=5.7){s='warn';txt='pre-diabetes range'} }
+  if(type==='alt'){ if(v>40){s='warn';txt='above typical'} }
+  if(type==='trig'){ if(v>=2.3){s='bad';txt='high'} else if(v>=1.7){s='warn';txt='borderline'} }
+  return `<span class="${s} tiny"> · ${txt}</span>`;
+}
+function renderBody(){
+  const b=DB.body.slice(-10).reverse();
+  document.getElementById('bodyHistory').innerHTML = b.length?b.map(x=>
+    `<div class="item"><div>${x.weight?x.weight+' kg':''}${x.waist?' · '+x.waist+' cm':''}</div>
+     <div class="meta">${fmtDate(x.date)}</div></div>`).join('')
+    :'<div class="muted small">No measurements yet.</div>';
+  const l=DB.labs.slice(-1)[0];
+  document.getElementById('labFeedback').innerHTML = l?`<div class="small">Latest bloods (${fmtDate(l.date)}):
+    ${l.glu!=null?`<div>Fasting glucose ${l.glu}${labBand(l.glu,'glu')}</div>`:''}
+    ${l.hba!=null?`<div>HbA1c ${l.hba}%${labBand(l.hba,'hba')}</div>`:''}
+    ${l.alt!=null?`<div>ALT ${l.alt}${labBand(l.alt,'alt')}</div>`:''}
+    ${l.trig!=null?`<div>Triglycerides ${l.trig}${labBand(l.trig,'trig')}</div>`:''}
+    <div class="note">Bands are general guides, not a diagnosis — discuss changes with your clinician.</div></div>`:'';
+}
+
+/* ---------- dashboard ---------- */
+function weekStartOf(d){const x=new Date(d);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);return x.toISOString().slice(0,10);}
+function renderHome(){
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  // protein
+  const food=DB.food[todayKey()]||[]; let p=0,c=0; food.forEach(f=>{p+=f.prot;c+=f.kcal;});
+  document.getElementById('protToday').textContent=p;
+  document.getElementById('protTarget').textContent=PROTEIN_TARGET;
+  document.getElementById('protBar').style.width=Math.min(100,p/PROTEIN_TARGET*100)+'%';
+  document.getElementById('protKcal').textContent=c?c+' kcal logged':'';
+  const left=PROTEIN_TARGET-p;
+  document.getElementById('protNote').textContent = left>0?`${left}g to go — a tin of tuna + Greek yogurt closes most of that.`:'Target hit. Nice work.';
+  // weekly sessions + streak
+  const thisWeek=weekStartOf(new Date());
+  const weekSessions=DB.sessions.filter(s=>weekStartOf(s.date)===thisWeek);
+  document.getElementById('weekWorkouts').textContent=weekSessions.length;
+  document.getElementById('weekList').innerHTML = weekSessions.length?weekSessions.slice().reverse().map(s=>
+    `<div class="item"><div>${s.type.split(' (')[0]}</div><div class="meta">${fmtDate(s.date)}</div></div>`).join('')
+    :'<div class="muted small">No sessions logged yet — go to Train.</div>';
+  // streak: consecutive weeks (incl this one if any) with >=2 sessions
+  let streak=0; let probe=new Date();
+  for(let i=0;i<52;i++){
+    const ws=weekStartOf(probe);
+    const cnt=DB.sessions.filter(s=>weekStartOf(s.date)===ws).length;
+    if(cnt>=2) streak++; else if(i>0) break; else if(cnt===0 && i===0){/*current week not done yet, keep checking past*/}
+    if(cnt<2 && i>0) break;
+    probe.setDate(probe.getDate()-7);
+  }
+  document.getElementById('streakNum').textContent=streak;
+  // weight
+  const bw=DB.body.filter(x=>x.weight).slice(-1)[0];
+  document.getElementById('lastWeight').textContent=bw?bw.weight:'—';
+  // spark
+  const ws=DB.body.filter(x=>x.weight).slice(-14);
+  if(ws.length>1){
+    const vals=ws.map(x=>x.weight); const mn=Math.min(...vals),mx=Math.max(...vals);
+    document.getElementById('weightSpark').innerHTML=vals.map(v=>
+      `<div style="height:${mx===mn?50:10+(v-mn)/(mx-mn)*90}%"></div>`).join('');
+    document.getElementById('weightSparkLbl').textContent=`${ws.length} entries · ${vals[0]}kg → ${vals.at(-1)}kg`;
+  }
+  // recipe of the night (rotates by day)
+  const r=RECIPES[new Date().getDate()%RECIPES.length];
+  document.getElementById('homeRecipe').innerHTML=recipeCard(r);
+}
+
+/* ---------- backup ---------- */
+function exportData(){
+  const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='petefit-backup-'+todayKey()+'.json'; a.click();
+}
+
+/* ---------- init ---------- */
+renderHome();
+</script>
+</body>
+</html>
