@@ -60,7 +60,7 @@
     display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
   nav button .ic{font-size:20px}
   nav button.on{color:var(--accent)}
-  .hide{display:none}
+  .hide{display:none!important}
   .muted{color:var(--muted)} .small{font-size:13px} .tiny{font-size:11px}
   .recipe{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
   .recipe h3{font-size:16px;margin-bottom:4px}
@@ -283,11 +283,11 @@
 </div>
 
 <!-- ============ EXERCISE PICKER MODAL ============ -->
-<div id="picker" class="modal hide">
+<div id="picker" class="modal hide" onclick="if(event.target===this)closePicker()">
   <div class="sheet">
     <div class="shead">
       <strong>Add exercise</strong>
-      <button class="sm" onclick="closePicker()">Done</button>
+      <button class="sm" onclick="closePicker()">✕ Done</button>
     </div>
     <div class="sbody">
       <div class="partrow" id="partRow"></div>
@@ -828,6 +828,9 @@ function exportData(){
 }
 
 /* ---------- init ---------- */
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closePicker(); });
+document.getElementById('picker').classList.add('hide'); // never start on the picker
+go('home');                                              // always open on Home
 renderHome();
 </script>
 </body>
